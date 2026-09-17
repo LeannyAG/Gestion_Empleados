@@ -6,4 +6,19 @@
     <version>0.0.1-SNAPSHOT</version>
   </parent>
   <artifactId>gestion-empleados-ui</artifactId>
+  
+  
+  
+  <dependencies>
+        <dependency>
+            <groupId>umg.edu.gt.progra2.gestion.empleados</groupId>
+            <artifactId>gestion-empleados-core</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+
+
+
 </project>
+
+
