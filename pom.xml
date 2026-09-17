@@ -6,5 +6,6 @@
   <packaging>pom</packaging>
   <modules>
   	<module>gestion-empleados-core</module>
+  	<module>gestion-empleados-ui</module>
   </modules>
 </project>
