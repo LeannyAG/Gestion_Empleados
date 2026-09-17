@@ -16,7 +16,8 @@ public class Empleado {
 	private LocalDateTime fechaBaja;
 	
 
-
+	  public Empleado() {
+	    }
 
 
 public Empleado (int id, String nombres, String departamento,BigDecimal salario, Boolean activo, LocalDateTime fechaBaja, LocalDate fechaContratacion ) {
