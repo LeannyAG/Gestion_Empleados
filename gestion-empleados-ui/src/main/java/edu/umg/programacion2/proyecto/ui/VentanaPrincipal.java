@@ -16,7 +16,8 @@ import javax.swing.JButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
-import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 
 import javax.swing.JOptionPane;
@@ -24,6 +25,12 @@ import javax.swing.table.DefaultTableModel;
 
 import edu.umg.programacion2.proyecto.dao.EmpleadoDAO;
 import edu.umg.programacion2.proyecto.modelo.Empleado;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.math.BigDecimal;
+import java.awt.event.ActionEvent;
+import javax.swing.DefaultComboBoxModel;
 
 public class VentanaPrincipal extends JFrame {
 
@@ -45,22 +52,24 @@ public class VentanaPrincipal extends JFrame {
 			List<Empleado> empleados = empleadoDAO.listarTodos(); 
 			
 			DefaultTableModel modelo = 
+					
 					(DefaultTableModel) table.getModel();
+			
 			
 			modelo.setRowCount(0);
 			
 			for(Empleado empleado : empleados) {
 				
-				modelo.addRow (new Object[] {
-						empleado.getId(),
-						empleado.getNombres(),
-						empleado.getDepartamento(),
-						empleado.getSalario(),
-						empleado.getActivo() ? "si" : "no"
-						
-				});
+				modelo.addRow(new Object[] {
+					    empleado.getId(),
+					    empleado.getNombres(),
+					    empleado.getDepartamento(),
+					    empleado.getSalario(),
+					    empleado.getFechaContratacion(),
+					    empleado.getActivo() ? "si" : "no"
+					});
 			}
-			}catch (SQLException e) {
+			}catch (Exception e) {
 			 JOptionPane.showMessageDialog(
 					 this,
 					 "Error al cargar los empleados" + e.getMessage(),
@@ -127,8 +136,11 @@ public class VentanaPrincipal extends JFrame {
         textField_3.setColumns(10);
         
         JComboBox comboBox = new JComboBox();
+        comboBox.setFont(new Font("HP Simplified Hans", Font.BOLD, 12));
+        comboBox.setModel(new DefaultComboBoxModel(new String[] {"Seleccione", "Sistemas", "Ventas", "Contabilidad", "Administracion", "Marketing"}));
         comboBox.setBounds(332, 121, 185, 20);
         getContentPane().add(comboBox);
+       
         
         JLabel lblNewLabel_2 = new JLabel("AAAA-MM-DD");
         lblNewLabel_2.setBounds(501, 224, 90, 13);
@@ -140,21 +152,293 @@ public class VentanaPrincipal extends JFrame {
         getContentPane().add(lblNewLabel_3);
         
         JButton btnregistrar = new JButton("Registar");
+        btnregistrar.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		
+        		try {
+        			String nombres = textField.getText().trim();
+        		    String departamento = comboBox.getSelectedItem().toString();
+        		    BigDecimal salario = new BigDecimal(textField_2.getText().trim());
+        		    LocalDate fecha = LocalDate.parse(textField_3.getText().trim());
+        		    boolean activo = chckbxNewCheckBox.isSelected();
+        		    
+        		    if(nombres.isEmpty()) {
+        		    	JOptionPane.showMessageDialog(
+        		    			VentanaPrincipal.this,
+        		    			"Debe ingresar el nombre"
+        		    			);
+        		    	return;
+        		    	
+        		    }
+        		    
+        		    if(salario.compareTo(BigDecimal.ZERO) <= 0) {
+        		    	JOptionPane.showMessageDialog(
+        		    			VentanaPrincipal.this,
+        		    			"El salario debe ser mayor a 0"
+        		    			);
+        		    	return;
+        		    	
+        		    }
+        		    
+        		    if(fecha.isAfter(LocalDate.now())) {
+        		    	JOptionPane.showMessageDialog(
+        		    			VentanaPrincipal.this,
+        		    			"La fecha de contratacion no puede ser futura"
+        		    			);
+        		    	return;
+        		    }
+        		    
+        		    Empleado empleado = new Empleado();
+        		    
+        		    empleado.setNombres(nombres);
+        		    empleado.setDepartamento(departamento);
+        		    empleado.setSalario(salario);
+        		    empleado.setFechaContratacion(fecha);
+        		    empleado.setActivo(activo);
+        		    empleado.setFechaBaja(null);
+        		    
+        		    empleadoDAO.crear(empleado);
+        		    
+        		    JOptionPane.showMessageDialog(
+        		            VentanaPrincipal.this,
+        		            "Empleado registrado correctamente."
+        		    );
+        		    
+        		    	cargarEmpleados();
+        		    
+        		} catch (NumberFormatException ex) {
+
+        		    JOptionPane.showMessageDialog(
+        		            VentanaPrincipal.this,
+        		            "Ingrese un salario válido."
+        		    );
+
+        		} catch (DateTimeParseException ex) {
+
+        		    JOptionPane.showMessageDialog(
+        		            VentanaPrincipal.this,
+        		            "La fecha debe escribirse como AAAA-MM-DD."
+        		    );
+
+        		} catch (Exception ex) {
+
+        		    JOptionPane.showMessageDialog(
+        		            VentanaPrincipal.this,
+        		            "Error al registrar: " + ex.getMessage(),
+        		            "ERROR",
+        		            JOptionPane.ERROR_MESSAGE
+        		    );
+        		}
+        		 if (comboBox.getSelectedIndex() == 0) {
+        	            JOptionPane.showMessageDialog(
+        	                VentanaPrincipal.this,
+        	                "Debe seleccionar un departamento."
+        	            );
+        	            return;
+        	        }
+        	}
+        });
+       
+        
         btnregistrar.setFont(new Font("HP Simplified Hans", Font.PLAIN, 12));
         btnregistrar.setBounds(204, 324, 90, 20);
         getContentPane().add(btnregistrar);
         
         JButton btnactualizar = new JButton("Actualizar");
+        btnactualizar.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		int fila = table.getSelectedRow();
+
+        		if (fila == -1) {
+        		    JOptionPane.showMessageDialog(
+        		            VentanaPrincipal.this,
+        		            "Debe seleccionar un empleado de la tabla."
+        		    );
+        		    return;
+        		}
+
+        		try {
+        		    int id = Integer.parseInt(
+        		            table.getValueAt(fila, 0).toString()
+        		    );
+
+        		    String nombres = textField.getText().trim();
+        		    String departamento = comboBox.getSelectedItem().toString();
+        		    BigDecimal salario = new BigDecimal(textField_2.getText().trim());
+        		    LocalDate fecha = LocalDate.parse(textField_3.getText().trim());
+        		    boolean activo = chckbxNewCheckBox.isSelected();
+
+        		    if (nombres.isEmpty()) {
+        		        JOptionPane.showMessageDialog(
+        		                VentanaPrincipal.this,
+        		                "Debe ingresar el nombre."
+        		        );
+        		        return;
+        		    }
+
+        		    if (comboBox.getSelectedIndex() == 0) {
+        		        JOptionPane.showMessageDialog(
+        		                VentanaPrincipal.this,
+        		                "Debe seleccionar un departamento."
+        		        );
+        		        return;
+        		    }
+
+        		    if (salario.compareTo(BigDecimal.ZERO) <= 0) {
+        		        JOptionPane.showMessageDialog(
+        		                VentanaPrincipal.this,
+        		                "El salario debe ser mayor a 0."
+        		        );
+        		        return;
+        		    }
+
+        		    if (fecha.isAfter(LocalDate.now())) {
+        		        JOptionPane.showMessageDialog(
+        		                VentanaPrincipal.this,
+        		                "La fecha de contratación no puede ser futura."
+        		        );
+        		        return;
+        		    }
+
+        		    Empleado empleado = new Empleado();
+
+        		    empleado.setId(id);
+        		    empleado.setNombres(nombres);
+        		    empleado.setDepartamento(departamento);
+        		    empleado.setSalario(salario);
+        		    empleado.setFechaContratacion(fecha);
+        		    empleado.setActivo(activo);
+        		    empleado.setFechaBaja(null);
+
+        		    boolean actualizado = empleadoDAO.actualizar(empleado);
+
+        		    if (actualizado) {
+        		        JOptionPane.showMessageDialog(
+        		                VentanaPrincipal.this,
+        		                "Empleado actualizado correctamente."
+        		        );
+
+        		        cargarEmpleados();
+
+        		    } else {
+        		        JOptionPane.showMessageDialog(
+        		                VentanaPrincipal.this,
+        		                "No se encontró el empleado."
+        		        );
+        		    }
+
+        		} catch (NumberFormatException ex) {
+
+        		    JOptionPane.showMessageDialog(
+        		            VentanaPrincipal.this,
+        		            "Ingrese un salario válido."
+        		    );
+
+        		} catch (DateTimeParseException ex) {
+
+        		    JOptionPane.showMessageDialog(
+        		            VentanaPrincipal.this,
+        		            "La fecha debe escribirse como AAAA-MM-DD."
+        		    );
+
+        		} catch (Exception ex) {
+
+        		    JOptionPane.showMessageDialog(
+        		            VentanaPrincipal.this,
+        		            "Error al actualizar: " + ex.getMessage(),
+        		            "ERROR",
+        		            JOptionPane.ERROR_MESSAGE
+        		    );
+        		}
+        	}
+        });
         btnactualizar.setFont(new Font("HP Simplified Hans", Font.PLAIN, 12));
         btnactualizar.setBounds(332, 325, 90, 20);
         getContentPane().add(btnactualizar);
         
         JButton btneliminar = new JButton("Eliminar");
+        btneliminar.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		int fila = table.getSelectedRow();
+
+        		if (fila == -1) {
+        		    JOptionPane.showMessageDialog(
+        		            VentanaPrincipal.this,
+        		            "Debe seleccionar un empleado de la tabla."
+        		    );
+        		    return;
+        		}
+
+        		int id = Integer.parseInt(
+        		        table.getValueAt(fila, 0).toString()
+        		);
+
+        		String nombre = table.getValueAt(fila, 1).toString();
+
+        		int respuesta = JOptionPane.showConfirmDialog(
+        		        VentanaPrincipal.this,
+        		        "¿Está seguro de eliminar a " + nombre + "?",
+        		        "Confirmar eliminación",
+        		        JOptionPane.YES_NO_OPTION
+        		);
+
+        		if (respuesta == JOptionPane.YES_OPTION) {
+
+        		    try {
+
+        		        boolean eliminado = empleadoDAO.eliminar(id);
+
+        		        if (eliminado) {
+
+        		            JOptionPane.showMessageDialog(
+        		                    VentanaPrincipal.this,
+        		                    "Empleado eliminado correctamente."
+        		            );
+
+        		            cargarEmpleados();
+
+        		            textField.setText("");
+        		            comboBox.setSelectedIndex(0);
+        		            textField_2.setText("");
+        		            textField_3.setText("");
+        		            chckbxNewCheckBox.setSelected(true);
+        		            table.clearSelection();
+
+        		        } else {
+
+        		            JOptionPane.showMessageDialog(
+        		                    VentanaPrincipal.this,
+        		                    "No se encontró el empleado."
+        		            );
+        		        }
+
+        		    } catch (Exception ex) {
+
+        		        JOptionPane.showMessageDialog(
+        		                VentanaPrincipal.this,
+        		                "Error al eliminar: " + ex.getMessage(),
+        		                "ERROR",
+        		                JOptionPane.ERROR_MESSAGE
+        		        );
+        		    }
+        		}
+        	}
+        });
         btneliminar.setFont(new Font("HP Simplified Hans", Font.PLAIN, 12));
         btneliminar.setBounds(457, 326, 90, 20);
         getContentPane().add(btneliminar);
         
         JButton btnLimpiar = new JButton("Limpiar");
+        btnLimpiar.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		textField.setText("");
+        		comboBox.setSelectedIndex(0);
+        		textField_2.setText("");
+        		textField_3.setText("");
+        		chckbxNewCheckBox.setSelected(true);
+        		table.clearSelection();
+        	}
+        });
         btnLimpiar.setFont(new Font("HP Simplified Hans", Font.PLAIN, 12));
         btnLimpiar.setBounds(585, 325, 90, 20);
         getContentPane().add(btnLimpiar);
@@ -166,13 +450,51 @@ public class VentanaPrincipal extends JFrame {
         table = new JTable();
 
         table.setModel(new DefaultTableModel(
-                new Object[][] {},
-                new String[] {
-                        "ID", "Nombre", "Departamento", "Salario", "Activo"
-                }
-        ));
+        	    new Object[][] {},
+        	    new String[] {
+        	        "ID",
+        	        "Nombre",
+        	        "Departamento",
+        	        "Salario",
+        	        "Fecha Contratación",
+        	        "Activo"
+        	    }
+        	));
 
         scrollPane.setViewportView(table);
+        
+        table.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+
+                int fila = table.getSelectedRow();
+
+                if (fila >= 0) {
+
+                    textField.setText(
+                            table.getValueAt(fila, 1).toString()
+                    );
+
+                    comboBox.setSelectedItem(
+                            table.getValueAt(fila, 2).toString()
+                    );
+
+                    textField_2.setText(
+                            table.getValueAt(fila, 3).toString()
+                    );
+
+                    textField_3.setText(
+                            table.getValueAt(fila, 4).toString()
+                    );
+
+                    String activo = table.getValueAt(fila, 5).toString();
+
+                    chckbxNewCheckBox.setSelected(
+                            activo.equalsIgnoreCase("si")
+                    );
+                }
+            }
+        });
         
         
         cargarEmpleados();

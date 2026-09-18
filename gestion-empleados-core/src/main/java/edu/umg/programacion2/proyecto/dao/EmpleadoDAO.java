@@ -24,7 +24,7 @@ public class EmpleadoDAO {
 	
     private static final String URL = "jdbc:mysql://localhost:3306/gestion_empleados?useSSL=false&serverTimezone=UTC";
     private static final String USUARIO = "root";
-    private static final String PASSWORD = "tu_PASSWORD";
+    private static final String PASSWORD = "Leanny.19";
 
 	
    
@@ -151,7 +151,7 @@ return empleados;
     		  
     		  statement.setInt(1, id);
     		  
-    		  return statement.executeUpdate() > 1;
+    		  return statement.executeUpdate() >= 1;
     	  }
     	  
       }
