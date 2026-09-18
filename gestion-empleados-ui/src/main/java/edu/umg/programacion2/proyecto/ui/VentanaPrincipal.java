@@ -444,7 +444,7 @@ public class VentanaPrincipal extends JFrame {
         getContentPane().add(btnLimpiar);
         
         JScrollPane scrollPane = new JScrollPane();
-        scrollPane.setBounds(123, 381, 612, 156);
+        scrollPane.setBounds(123, 381, 612, 89);
         getContentPane().add(scrollPane);
 
         table = new JTable();
