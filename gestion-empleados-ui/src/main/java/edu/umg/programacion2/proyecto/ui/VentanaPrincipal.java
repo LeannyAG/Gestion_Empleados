@@ -16,7 +16,19 @@ import javax.swing.JButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
+import java.sql.SQLException;
+import java.util.List;
+
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
+import edu.umg.programacion2.proyecto.dao.EmpleadoDAO;
+import edu.umg.programacion2.proyecto.modelo.Empleado;
+
 public class VentanaPrincipal extends JFrame {
+
+	private EmpleadoDAO empleadoDAO = new EmpleadoDAO();
+	
 	
 	private static final long serialVersionUID = 1L;
 	private JTextField textField;
@@ -24,6 +36,41 @@ public class VentanaPrincipal extends JFrame {
 	private JTextField textField_3;
 	private JTable table;
 	private JTable table_1;
+	
+	
+	
+	private void cargarEmpleados() {
+		
+		try {
+			List<Empleado> empleados = empleadoDAO.listarTodos(); 
+			
+			DefaultTableModel modelo = 
+					(DefaultTableModel) table.getModel();
+			
+			modelo.setRowCount(0);
+			
+			for(Empleado empleado : empleados) {
+				
+				modelo.addRow (new Object[] {
+						empleado.getId(),
+						empleado.getNombres(),
+						empleado.getDepartamento(),
+						empleado.getSalario(),
+						empleado.getActivo() ? "si" : "no"
+						
+				});
+			}
+			}catch (SQLException e) {
+			 JOptionPane.showMessageDialog(
+					 this,
+					 "Error al cargar los empleados" + e.getMessage(),
+					 "ERROR",
+					 JOptionPane.ERROR_MESSAGE
+					 );
+			}
+		}
+		
+	
 
     public VentanaPrincipal() {
     	
@@ -126,7 +173,13 @@ public class VentanaPrincipal extends JFrame {
         ));
 
         scrollPane.setViewportView(table);
+        
+        
+        cargarEmpleados();
     }
+    
+
+    
     }
 
 

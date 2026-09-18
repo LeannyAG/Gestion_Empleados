@@ -22,7 +22,7 @@ import edu.umg.programacion2.proyecto.modelo.Empleado;
 public class EmpleadoDAO {
 
 	
-    private static final String URL = "jdbc:mysql://localhost:3306/gestion-empleados?useSSL=false&serverTimezone=UTC";
+    private static final String URL = "jdbc:mysql://localhost:3306/gestion_empleados?useSSL=false&serverTimezone=UTC";
     private static final String USUARIO = "root";
     private static final String PASSWORD = "tu_PASSWORD";
 
