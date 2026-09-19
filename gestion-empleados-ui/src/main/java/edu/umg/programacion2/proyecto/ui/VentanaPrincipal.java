@@ -43,6 +43,7 @@ public class VentanaPrincipal extends JFrame {
 	private JTextField textField_3;
 	private JTable table;
 	private JTable table_1;
+	private JTextField textField_1;
 	
 	
 	
@@ -63,6 +64,7 @@ public class VentanaPrincipal extends JFrame {
 				modelo.addRow(new Object[] {
 					    empleado.getId(),
 					    empleado.getNombres(),
+					    empleado.getCorreo(),
 					    empleado.getDepartamento(),
 					    empleado.getSalario(),
 					    empleado.getFechaContratacion(),
@@ -102,7 +104,7 @@ public class VentanaPrincipal extends JFrame {
         
         JLabel lblNewLabel_1_1 = new JLabel("Departamento");
         lblNewLabel_1_1.setFont(new Font("HP Simplified Hans", Font.BOLD, 18));
-        lblNewLabel_1_1.setBounds(165, 110, 129, 37);
+        lblNewLabel_1_1.setBounds(165, 127, 129, 37);
         getContentPane().add(lblNewLabel_1_1);
         
         JLabel lblNewLabel_1_1_1 = new JLabel("Salario");
@@ -138,7 +140,7 @@ public class VentanaPrincipal extends JFrame {
         JComboBox comboBox = new JComboBox();
         comboBox.setFont(new Font("HP Simplified Hans", Font.BOLD, 12));
         comboBox.setModel(new DefaultComboBoxModel(new String[] {"Seleccione", "Sistemas", "Ventas", "Contabilidad", "Administracion", "Marketing"}));
-        comboBox.setBounds(332, 121, 185, 20);
+        comboBox.setBounds(334, 137, 185, 20);
         getContentPane().add(comboBox);
        
         
@@ -157,6 +159,7 @@ public class VentanaPrincipal extends JFrame {
         		
         		try {
         			String nombres = textField.getText().trim();
+        			String correo = textField_1.getText().trim();
         		    String departamento = comboBox.getSelectedItem().toString();
         		    BigDecimal salario = new BigDecimal(textField_2.getText().trim());
         		    LocalDate fecha = LocalDate.parse(textField_3.getText().trim());
@@ -191,6 +194,7 @@ public class VentanaPrincipal extends JFrame {
         		    Empleado empleado = new Empleado();
         		    
         		    empleado.setNombres(nombres);
+					empleado.setCorreo(correo);
         		    empleado.setDepartamento(departamento);
         		    empleado.setSalario(salario);
         		    empleado.setFechaContratacion(fecha);
@@ -236,6 +240,9 @@ public class VentanaPrincipal extends JFrame {
         	            );
         	            return;
         	        }
+        		 
+        		 
+        		 
         	}
         });
        
@@ -263,6 +270,7 @@ public class VentanaPrincipal extends JFrame {
         		    );
 
         		    String nombres = textField.getText().trim();
+        		    String correo  = textField_1.getText().trim();
         		    String departamento = comboBox.getSelectedItem().toString();
         		    BigDecimal salario = new BigDecimal(textField_2.getText().trim());
         		    LocalDate fecha = LocalDate.parse(textField_3.getText().trim());
@@ -304,6 +312,7 @@ public class VentanaPrincipal extends JFrame {
 
         		    empleado.setId(id);
         		    empleado.setNombres(nombres);
+        		    empleado.setCorreo(correo);
         		    empleado.setDepartamento(departamento);
         		    empleado.setSalario(salario);
         		    empleado.setFechaContratacion(fecha);
@@ -398,6 +407,7 @@ public class VentanaPrincipal extends JFrame {
         		            cargarEmpleados();
 
         		            textField.setText("");
+        		            textField_1.setText("");
         		            comboBox.setSelectedIndex(0);
         		            textField_2.setText("");
         		            textField_3.setText("");
@@ -432,6 +442,7 @@ public class VentanaPrincipal extends JFrame {
         btnLimpiar.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
         		textField.setText("");
+        		textField_1.setText("");
         		comboBox.setSelectedIndex(0);
         		textField_2.setText("");
         		textField_3.setText("");
@@ -454,6 +465,7 @@ public class VentanaPrincipal extends JFrame {
         	    new String[] {
         	        "ID",
         	        "Nombre",
+        	        "Correo",
         	        "Departamento",
         	        "Salario",
         	        "Fecha Contratación",
@@ -462,6 +474,17 @@ public class VentanaPrincipal extends JFrame {
         	));
 
         scrollPane.setViewportView(table);
+        
+        JLabel lblNewLabel_1_1_2 = new JLabel("Correo electronico");
+        lblNewLabel_1_1_2.setFont(new Font("HP Simplified Hans", Font.BOLD, 18));
+        lblNewLabel_1_1_2.setBounds(163, 97, 150, 37);
+        getContentPane().add(lblNewLabel_1_1_2);
+        
+        textField_1 = new JTextField();
+        textField_1.setColumns(10);
+        textField_1.setBounds(332, 109, 191, 18);
+        getContentPane().add(textField_1);
+        
         
         table.addMouseListener(new MouseAdapter() {
             @Override
@@ -474,20 +497,26 @@ public class VentanaPrincipal extends JFrame {
                     textField.setText(
                             table.getValueAt(fila, 1).toString()
                     );
-
-                    comboBox.setSelectedItem(
-                            table.getValueAt(fila, 2).toString()
+                    
+                    Object  correo = table.getValueAt(fila, 2);
+                    
+                    textField_1.setText(
+                           correo != null ? correo.toString() : ""
                     );
 
-                    textField_2.setText(
+                    comboBox.setSelectedItem(
                             table.getValueAt(fila, 3).toString()
                     );
 
-                    textField_3.setText(
+                    textField_2.setText(
                             table.getValueAt(fila, 4).toString()
                     );
 
-                    String activo = table.getValueAt(fila, 5).toString();
+                    textField_3.setText(
+                            table.getValueAt(fila, 6).toString()
+                    );
+
+                    String activo = table.getValueAt(fila, 6).toString();
 
                     chckbxNewCheckBox.setSelected(
                             activo.equalsIgnoreCase("si")
