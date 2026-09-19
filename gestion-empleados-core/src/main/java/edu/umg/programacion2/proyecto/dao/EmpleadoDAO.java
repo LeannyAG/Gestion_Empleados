@@ -31,23 +31,24 @@ public class EmpleadoDAO {
    
     
     public Empleado crear (Empleado empleado) throws SQLException {
-    	String sql = "INSERT INTO empleados (nombres, departamento, salario, fecha_contratacion, activo, fecha_baja) VALUES (?,?,?,?,?,?)";
+    	String sql = "INSERT INTO empleados (nombres, departamento, salario, fecha_contratacion, activo, fecha_baja, correo) VALUES (?,?,?,?,?,?, ?)";
     	
     	
     	try (Connection conexion = DriverManager.getConnection(URL, USUARIO, PASSWORD);
                 PreparedStatement statement = conexion.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
     		
     		statement.setString(1, empleado.getNombres());
-    		statement.setString(2, empleado.getDepartamento());
-    		statement.setBigDecimal(3, empleado.getSalario());
-    		statement.setDate(4,
+    		statement.setString(2, empleado.getCorreo());
+    		statement.setString(3, empleado.getDepartamento());
+    		statement.setBigDecimal(4, empleado.getSalario());
+    		statement.setDate(5,
                     Date.valueOf(empleado.getFechaContratacion()));
-    		statement.setBoolean(5, empleado.getActivo());
+    		statement.setBoolean(6, empleado.getActivo());
 
     		if (empleado.getFechaBaja() != null) {
-    		    statement.setTimestamp(6, Timestamp.valueOf(empleado.getFechaBaja()));
+    		    statement.setTimestamp(7, Timestamp.valueOf(empleado.getFechaBaja()));
     		} else {
-    		    statement.setNull(6, Types.TIMESTAMP);
+    		    statement.setNull(7, Types.TIMESTAMP);
     		    
     		    statement.executeUpdate();
 
@@ -85,6 +86,7 @@ public List<Empleado> listarTodos() throws SQLException {
 
             empleado.setId(rs.getInt("id"));
             empleado.setNombres(rs.getString("nombres"));
+            empleado.setCorreo(rs.getString("correo"));
             empleado.setDepartamento(rs.getString("departamento"));
             empleado.setSalario(rs.getBigDecimal("salario"));
             empleado.setFechaContratacion(
@@ -109,7 +111,7 @@ return empleados;
 
          public boolean actualizar(Empleado empleado) throws SQLException {
 
-    String sql = "UPDATE empleados SET nombres = ?, departamento = ?, "
+    String sql = "UPDATE empleados SET nombres = ?, correo = ?, departamento = ?, "
             + "salario = ?, fecha_contratacion = ?, activo = ?, fecha_baja = ? "
             + "WHERE id = ?";
 
@@ -118,20 +120,21 @@ return empleados;
 
 
     	statement.setString(1, empleado.getNombres());
-		statement.setString(2, empleado.getDepartamento());
-		statement.setBigDecimal(3, empleado.getSalario());
-		statement.setDate(4,
+    	statement.setString(2, empleado.getCorreo());
+		statement.setString(3, empleado.getDepartamento());
+		statement.setBigDecimal(4, empleado.getSalario());
+		statement.setDate(5,
                 Date.valueOf(empleado.getFechaContratacion()));
-		statement.setBoolean(5, empleado.getActivo());
+		statement.setBoolean(6, empleado.getActivo());
 		
 		if (empleado.getFechaBaja() != null) {
-           statement.setTimestamp(6, Timestamp.valueOf(empleado.getFechaBaja()));
+           statement.setTimestamp(7, Timestamp.valueOf(empleado.getFechaBaja()));
         } else {
-            statement.setNull(6, Types.TIMESTAMP);
+            statement.setNull(7, Types.TIMESTAMP);
             
         }
 		
-      statement.setInt(7, empleado.getId());
+      statement.setInt(8, empleado.getId());
       
       return statement.executeUpdate() >=1;
 
@@ -176,6 +179,7 @@ return empleados;
 
     	                empleado.setId(resultado.getInt("id"));
     	                empleado.setNombres(resultado.getString("nombres"));
+    	                empleado.setNombres(resultado.getString("correo"));
     	                empleado.setDepartamento(resultado.getString("departamento"));
     	                empleado.setSalario(resultado.getBigDecimal("salario"));
     	                empleado.setFechaContratacion(

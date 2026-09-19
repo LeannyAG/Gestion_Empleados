@@ -14,13 +14,14 @@ public class Empleado {
 	private LocalDate fechaContratacion;
 	private Boolean activo;
 	private LocalDateTime fechaBaja;
+	private String correo;
 	
 
 	  public Empleado() {
 	    }
 
 
-public Empleado (int id, String nombres, String departamento,BigDecimal salario, Boolean activo, LocalDateTime fechaBaja, LocalDate fechaContratacion ) {
+public Empleado (int id, String nombres, String departamento,BigDecimal salario, Boolean activo, LocalDateTime fechaBaja, LocalDate fechaContratacion, String correo ) {
     this.id = id;
     this.nombres = nombres;
     this.departamento = departamento;
@@ -28,6 +29,7 @@ public Empleado (int id, String nombres, String departamento,BigDecimal salario,
     this.fechaContratacion = fechaContratacion;
     this.activo = activo;
     this.fechaBaja = fechaBaja;
+    this.correo = correo;
 
 }
 
@@ -141,6 +143,16 @@ public LocalDateTime getFechaBaja() {
 
 public void setFechaBaja(LocalDateTime fechaBaja) {
 	this.fechaBaja = fechaBaja;
+}
+
+
+public String getCorreo() {
+	return correo;
+}
+
+
+public void setCorreo(String correo) {
+	this.correo = correo;
 }
 
 
