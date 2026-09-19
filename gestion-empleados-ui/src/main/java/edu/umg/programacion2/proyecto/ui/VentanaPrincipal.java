@@ -17,6 +17,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
 import java.time.LocalDate;
+import java.time.Period;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 
@@ -61,6 +62,13 @@ public class VentanaPrincipal extends JFrame {
 			
 			for(Empleado empleado : empleados) {
 				
+				int Antigüedad = Period.between(
+						empleado.getFechaContratacion(),
+						LocalDate.now()
+						).getYears();
+				
+				
+				
 				modelo.addRow(new Object[] {
 					    empleado.getId(),
 					    empleado.getNombres(),
@@ -68,7 +76,8 @@ public class VentanaPrincipal extends JFrame {
 					    empleado.getDepartamento(),
 					    empleado.getSalario(),
 					    empleado.getFechaContratacion(),
-					    empleado.getActivo() ? "si" : "no"
+					    empleado.getActivo() ? "si" : "no",
+					   Antigüedad + "  años"
 					});
 			}
 			}catch (Exception e) {
@@ -469,7 +478,8 @@ public class VentanaPrincipal extends JFrame {
         	        "Departamento",
         	        "Salario",
         	        "Fecha Contratación",
-        	        "Activo"
+        	        "Activo",
+        	        "Antigüedad"
         	    }
         	));
 

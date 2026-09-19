@@ -31,7 +31,7 @@ public class EmpleadoDAO {
    
     
     public Empleado crear (Empleado empleado) throws SQLException {
-    	String sql = "INSERT INTO empleados (nombres, departamento, salario, fecha_contratacion, activo, fecha_baja, correo) VALUES (?,?,?,?,?,?, ?)";
+    	String sql = "INSERT INTO empleados (nombres, correo, departamento, salario, fecha_contratacion, activo, fecha_baja) VALUES (?,?,?,?,?,?, ?)";
     	
     	
     	try (Connection conexion = DriverManager.getConnection(URL, USUARIO, PASSWORD);
