@@ -13,6 +13,7 @@ import java.sql.Types;
 import java.util.ArrayList;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.ArrayList;
 
 import edu.umg.programacion2.proyecto.modelo.Empleado;
@@ -155,7 +156,48 @@ return empleados;
     	  }
     	  
       }
-         
+      
+      
+      
+      public Optional<Empleado> buscarPorId(int id) throws SQLException {
+
+    	    String sql = "SELECT * FROM empleados WHERE id = ?";
+
+    	    try (Connection conexion = DriverManager.getConnection(URL, USUARIO, PASSWORD);
+    	         PreparedStatement statement = conexion.prepareStatement(sql)) {
+
+    	        statement.setInt(1, id);
+
+    	        try (ResultSet resultado = statement.executeQuery()) {
+
+    	            if (resultado.next()) {
+
+    	                Empleado empleado = new Empleado();
+
+    	                empleado.setId(resultado.getInt("id"));
+    	                empleado.setNombres(resultado.getString("nombres"));
+    	                empleado.setDepartamento(resultado.getString("departamento"));
+    	                empleado.setSalario(resultado.getBigDecimal("salario"));
+    	                empleado.setFechaContratacion(
+    	                        resultado.getDate("fecha_contratacion").toLocalDate()
+    	                );
+    	                empleado.setActivo(resultado.getBoolean("activo"));
+
+    	                Timestamp fechaBaja = resultado.getTimestamp("fecha_baja");
+
+    	                if (fechaBaja != null) {
+    	                    empleado.setFechaBaja(fechaBaja.toLocalDateTime());
+    	                } else {
+    	                    empleado.setFechaBaja(null);
+    	                }
+
+    	                return Optional.of(empleado);
+    	            }
+
+    	            return Optional.empty();
+    	        }
+    	    }
+    	}
       
          
       
